@@ -1,23 +1,29 @@
-# todo can I use one conn/cursor - will need to pass around
-# todo secure db operations (inserts, etc.)
-# todo when/where close conn
+# todo p3 can I use one conn/cursor - will need to pass around
+# todo p3 secure db operations (inserts, etc.)
+# todo p3 when/where close conn
 
 from datetime import datetime
 import logging
 import sqlite3 as sql
 import sys
 
+import pytz
+
 logging.basicConfig(format='%(asctime)s %(message)s', filename='tos.log', level=logging.DEBUG)
 log = logging.getLogger('tos')
 
 
-def strtime_to_unixts(timestring, tformat='%Y-%m-%d', keep_sec=False):
+def strtime_to_unixts(timestring, tz='Etc/UTC', tformat='%Y-%m-%d', keep_sec=False):
     """
     convert a time string to unix timestamp, optionally including seconds, etc.
 
     The keep_sec param is a bool flag determining if the returned timestamp includes
     seconds (and smaller fractions of time).  Default is to remove seconds, etc.
 
+    todo p1 how to handle tz's - tests are failing
+
+    :param tz: timezone name, from pytz, UTC is default
+    :type tz: str
     :param tformat: strftime time format string
     :type tformat: str
     :param timestring: date and/or time string
@@ -28,7 +34,13 @@ def strtime_to_unixts(timestring, tformat='%Y-%m-%d', keep_sec=False):
     :rtype: float | int
     """
 
-    t = datetime.strptime(timestring, '%Y-%m-%d')  # convert to datetime obj
+    tz = pytz.timezone(tz)
+
+    t = datetime.strptime(timestring, tformat)  # convert to naive datetime obj
+    t = t.replace(tzinfo=tz)  # use the dt object replace method to set tz attribute
+
+    if tz is not pytz.utc:  # convert to UTC if not already
+        t = t.astimezone(pytz.utc)
 
     t = t.timestamp()  # convert to unix timestamp w/o seconds, etc.
 
