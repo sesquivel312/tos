@@ -4,8 +4,8 @@ app = Flask(__name__)
 
 @app.route('/')
 def hello():
-    return('hello there')
+    return '\n@@@ hello from TOS @@@\n@@@ I am {} @@@\n\n'.format(__name__)
 
 if __name__ == '__main__':
 
-    app.run(host='0.0.0.0')
+    app.run(host='127.0.0.1')

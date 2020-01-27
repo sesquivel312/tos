@@ -1,6 +1,6 @@
 import pathlib
 
-import tos.lib as lib
+import lib
 
 data_path = pathlib.Path('data')
 db = data_path.joinpath('db.sqlite')
