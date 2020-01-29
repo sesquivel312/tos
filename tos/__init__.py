@@ -7,6 +7,7 @@ import logging
 import sqlite3 as sql
 import sys
 
+from flask import Flask
 import pytz
 
 logging.basicConfig(format='%(asctime)s %(message)s', filename='tos.log', level=logging.DEBUG)
@@ -161,33 +162,48 @@ def get_latest_event_ts(conn):
     return r[0][0]  # list of tuples - need first and only element
 
 
-def get_holder(conn):
-    """
-    get current token holder
+app = Flask(__name__)
 
-    :param conn:
-    :return: todo what to return?
-    """
 
-    try:
-        ts = get_latest_event_ts(conn)
-    except:
-        log.warning(sys.exc_info())
+@app.route('/tos')
+def hello():
+    return '\n@@@ hello from TOS @@@\n@@@ I am {} @@@\n\n'.format(__name__)
 
-    q = """
-select users.name, events.ts, categories.category
-from events
-join users on events.user = users.ROWID
-join categories on events.category = categories.ROWID
-where events.ts = {}
-""".format(ts)
 
-    try:
-        c = conn.cursor()
-        c.execute(q)
+# @app.route('/holder')
+# def get_holder(conn):
+#     """
+#     get current token holder
+#
+#     :param conn:
+#     :return: todo what to return?
+#     """
+#
+#     try:
+#         ts = get_latest_event_ts(conn)
+#     except:
+#         log.warning(sys.exc_info())
+#
+#     q = """
+# select users.name, events.ts, categories.category
+# from events
+# join users on events.user = users.ROWID
+# join categories on events.category = categories.ROWID
+# where events.ts = {}
+# """.format(ts)
+#
+#     try:
+#         c = conn.cursor()
+#         c.execute(q)
+#
+#         r = c.fetchall()
+#         return r
+#
+#     except:
+#         log.warning(sys.exc_info())
 
-        r = c.fetchall()
-        return r
 
-    except:
-        log.warning(sys.exc_info())
+if __name__ == '__main__':
+    # this bit should only be used by the dev server
+
+    app.run(host='127.0.0.1')

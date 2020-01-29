@@ -1,7 +1,5 @@
 from unittest import TestCase
 
-import tos.lib as lib
-
 
 class MyTests(TestCase):
 
@@ -14,7 +12,7 @@ class MyTests(TestCase):
 
         for check in checks:
 
-            r = lib.strtime_to_unixts(*check[:-1])
+            r = tos.strtime_to_unixts(*check[:-1])
 
             self.assertEqual(check[-1], r)
 
