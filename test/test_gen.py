@@ -1,5 +1,6 @@
 from unittest import TestCase
 
+import tos
 
 class MyTests(TestCase):
 
@@ -7,7 +8,7 @@ class MyTests(TestCase):
 
         checks = [
             ('2020-01-01', 1577836800),
-            ('2020-01-01', 'America/Denver', 1577862000),  # given a date in phx, get correct nix ts
+            ('2020-01-02', 'Asia/Tokyo', 1577862000),  # given a date in phx, get correct nix ts
         ]
 
         for check in checks:
