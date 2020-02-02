@@ -135,3 +135,7 @@ dmypy.json
 
 # keep the lib directory
 !tos/lib/
+
+# don't include backup/old files
+*.bkp
+*.old

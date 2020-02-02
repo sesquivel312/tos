@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Add an new user</h2>
+    The user name must be unique</p>
+        <form method="POST" action="/user/add">
+            User Name: <input type="text" name="name">
+            <input type="submit" value="Add">
+        </form>
+{% endblock %}

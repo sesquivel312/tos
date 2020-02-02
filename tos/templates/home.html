@@ -1,28 +1,58 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Add an event</h2>
-        <form method="POST" action="/">
-            Nominee ID: <input type="number" name="nominee">
-            Reporter ID: <input type="number" name="reporter">
-            Category ID: <input type="number" name="category">
-            <input type="submit" value="Add">
-        </form>
-    </p>
-        <h2>Historical Events</h2>
-        <table>
-            {% for event in events %}
-            <tr>
-                <td>
-                    {{ event }}
-                </td>
-                <td>
-                    <form method="POST" action="./delete">
-                        <input type="hidden" value="{{ event }}" name="event">
-                        <input type="submit" value="Delete">
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
-        </table>
+
+<h1 style="text-align: center">Welcome to ToS</h1>
+
+<p><h3 style="text-align: center">The current holder is:</h3>
+
+<p  style="text-align: center; font-size: 60pt;">{{ holder }}</p>
+<p style="text-align: center"><img src="../static/tos.png" /></p>
+
+<p style="font-weight: bold; font-size: 18pt; text-align: center">Award the token
+    <form class="form-control" method="POST" action="/" style="align">
+        <label for="reporter">Reporter: </label>
+            <select id="reporter" name="reporter">
+                <option>--Choose</option>
+                {% for user in users %}
+                <option value="{{ user[0] }}">{{ user[1] }}</option>
+                {% endfor %}
+            </select>
+        <label for="nominee">Nominee: </label>
+            <select id="nominee" name="nominee">
+                <option>--Choose</option>
+                {% for user in users %}
+                <option value="{{ user[0] }}">{{ user[1] }}</option>
+                {% endfor %}
+            </select>
+        <label for="category">Category: </label>
+            <select id="category" name="category">
+                <option>--Choose</option>
+                {% for category in categories %}
+                <option value="{{ category[0] }}">{{ category[1] }}</option>
+                {% endfor %}
+            </select>
+        <input type="submit" value="Nominate">
+    </form>
+</p>
+
+<p style="font-weight: bold; font-size: 18pt; text-align: center;">Most Recent Awards</p>
+<table class="tg">
+    <thead>
+        <tr>
+            <th class="tg-1wig">Date</th>
+            <th class="tg-amwm">Recipient</th>
+            <th class="tg-amwm">Category</th>
+        </tr>
+    </thead>
+    <tbody>
+        {%  for event in events %}
+        <tr>
+            <td class="tg-0lax">{{ event[0] }}</td>
+            <td class="tg-baqh">{{ event[1] }}</td>
+            <td class="tg-baqh">{{ event[3] }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 {% endblock %}

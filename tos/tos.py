@@ -1,12 +1,21 @@
-# todo p3 can I use one conn/cursor - will need to pass around
-# todo p3 secure db operations (inserts, etc.)
-# todo p3 when/where close conn - this is tied up w/flask
-# todo p1 complete db operation function
-# todo p1 update db functions to consume/return human readable strings instead of IDs
-# todo P2 test with uwsgi, then nginx
-# todo p3 fix the log file name - possibly move it
-# todo p3 bootstrap integration
-# todo p3 add static image file to templates
+"""
+General comments
+
+    SQL(ite) stuff
+        results are returned as rows, which are represented as tuples.  If multiple
+        rows are returned then a list of tuples is returned, a single tuple is otherwise
+
+
+todo p1 complete db operation function
+todo p1 update db functions to consume/return human readable strings instead of IDs
+todo P2 test with uwsgi, then nginx
+todo p3 fix the log file name - possibly move it
+todo p3 bootstrap integration
+todo p3 add static image file to templates
+todo p3 can I use one conn/cursor - will need to pass around
+todo p3 secure db operations (inserts, etc.)
+todo p3 when/where close conn - this is tied up w/flask
+"""
 
 from datetime import datetime as dt
 import logging
@@ -131,7 +140,7 @@ def db_query(conn, query=None):
     return c.fetchall()
 
 
-def db_add_users(cur, names):
+def db_add_user(cur, name):
     """
     add users to users db
 
@@ -143,25 +152,68 @@ def db_add_users(cur, names):
     todo checks and return something sensible
     todo check # of records to insert
     :param cur: python dbapi connection object
-    :param names: user name
-    :type names: list
+    :param name: user name
+    :type name: list
     :return: name added or None if fail
     :rtype: str | None
     """
 
-    values = ''
-    for name in names:
-        values += "('{}'),".format(name)
-    values = values.rstrip(',')  # remove the trailing comma
+    q = "insert into users (name) values ('{}')".format(name)
+    cur.execute(q)
 
-    q = 'insert into users (name) values {}'.format(values)
-    c = cur.cursor()
 
-    try:
-        c.execute(q)
-        cur.commit()
-    except:
-        log.warning(str(sys.exc_info()))
+def db_delete_user(cur, user):
+    """
+    delete the user
+
+
+    :param cur:
+    :param user:
+    :return:
+    """
+
+    q = "delete from users where name = '{}'".format(user)
+
+    cur.execute(q)
+
+
+def db_get_users(cur):
+    """
+    get the current list of user names
+
+    """
+    q = "select ROWID, name from users"
+
+    cur.execute(q)
+
+    return cur.fetchall()
+
+
+def db_get_user_by_id(cur, id=None):
+    """
+    get user given an ID
+
+    todo p2 handle no id & errors
+    :param id:
+
+    """
+    q = "select name from users where ROWID = {}".format(id)
+
+    cur.execute(q)
+
+    return cur.fetchone()
+
+
+def db_get_categories(cur):
+    """
+    get the current list of categories
+
+    """
+    q = "select ROWID, category from categories"
+
+    cur.execute(q)
+
+    return cur.fetchall()
 
 
 def db_add_event(cur, event):
@@ -202,76 +254,156 @@ def db_delete_event(cur, event):
     cur.execute(q)
 
 
-def db_get_events(cur):
+def db_get_events(cur, limit=5):
     """
-    get the ts of the latest event in the events table
+    get the ts of the latest $limit events in the events table
 
+    If limit is None then get all the events
+
+    :param limit: number of events to get
+    :type limit: int
     :param cur: python dbapi connection object
-    :return: todo return what?
+    :return: event rows matching query
+    :rtype: list
     """
 
     # todo get latest events only - e.g. last 10
-    q = 'select * from events'  # get all the events
+    q = """
+select events.timestamp, nominee.name, reporter.name, categories.category
+from events 
+join users nominee on events.nominee == nominee.ROWID
+join users reporter on events.reporter == reporter.ROWID
+join categories on events.category == categories.ROWID
+order by timestamp desc limit {}
+""".format(limit)  # get all the events
+
+    cur.execute(q)
+    events = cur.fetchall()
+
+    for i, event in enumerate(events):
+        # convert the unix timestamps to a human friendly format
+        # need to recreate the tuples b/c immutable, then replace
+        # each tuple in the events list
+
+        ts, nom, rep, cat = event  # extract the tuple elements
+
+        ts = dt.fromtimestamp(ts)  # make ts human friendly
+        ts = dt.strftime(ts, '%m-%d-%Y')
+
+        events[i] = (ts, nom, rep, cat) # reconstitute the tuple & replace in events list
+
+    return events
+
+
+def db_get_holder(cur):
+    """
+    get the current token holder
+
+    :param cur:
+    :return:
+    """
+
+    q = """
+select users.name
+from events
+join users on events.nominee = users.ROWID
+where events.timestamp = (
+    select max(events.timestamp)
+    from events
+    )"""
 
     cur.execute(q)
 
-    return cur.fetchall()
+    return cur.fetchone()[0]
 
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST', ])
 def root():
+    """
+    handle the home page, which:
+
+        * displays the current holder
+        * provides form to award to new holder
+        * displays the last 5 awards
+
+    :return: rendered home page template
+    :rtype: text
+    """
 
     db = get_db()
     cur = db.cursor()
 
-    if request.form:
+    # need all this info in order to populate the page template
+    holder = db_get_holder(cur)
+    users = db_get_users(cur)
+    categories = db_get_categories(cur)
+    events = db_get_events(cur)
 
+    if request.form:
+        # award token, i.e. add event to events table
 
         reporter = request.form.get('reporter')
         nominee = request.form.get('nominee')
-        category = request.form.get('category')
+        categeory = request.form.get('category')
 
-        db_add_event(cur, (nominee, reporter, category))
+        db_add_event(cur, (nominee, reporter, categeory))
         db.commit()
 
-    events = db_get_events(cur)
+        # get new holder & recent events
+        holder = db_get_holder(cur)
+        events = db_get_events(cur)
 
-    return render_template('home.html', events=events)
-
-
-@app.route('/update', methods=['POST', ])
-def update():
-
-    current_title = request.form.get('current_title')
-    new_title = request.form.get('new_title')
-
-    app.logger.debug('@@@ update cur: {}, new: {}'.format(current_title, new_title))
-
-    db = get_db()
-    cur = db.cursor()
-
-    db_update_book(cur, current_title, new_title)
-
-    db.commit()
-
-    return redirect('/')
+    return render_template('home.html',
+                           holder=holder,
+                           users=users,
+                           categories=categories,
+                           events=events)
 
 
-@app.route('/delete', methods=['POST', ])
-def delete():
+@app.route('/user/add', methods=['GET', 'POST', ])
+def user_add():
+    """
+    add a user to the DB
 
-    event = request.form.get('event')
+    todo P1 must be authenticated
+    todo P2 handle attempt to add duplicate
+    :return:
+    """
 
-    app.logger.debug('@@@ delete - type(event): {}'.format(type(event)))
+    if request.form:
 
-    db = get_db()
-    cur = db.cursor()
+        db = get_db()
+        cur = db.cursor()
 
-    db_delete_event(cur, event)
+        name = request.form.get('name')
 
-    db.commit()
+        db_add_user(cur, name)
+        db.commit()
 
-    return redirect('/')
+    return render_template('add_user.html')
+
+
+@app.route('/user/delete', methods=['GET', 'POST', ])
+def user_delete():
+    """
+    remove a user from the DB
+
+    todo P1 must be authenticated
+    todo P2 handle attempt to add duplicate
+    :return:
+    """
+
+    if request.form:
+
+        db = get_db()
+        cur = db.cursor()
+
+        name = request.form.get('name')
+
+        db_delete_user(cur, name)
+        db.commit()
+
+    return render_template('delete_user.html')
 
 
 if __name__ == '__main__':
