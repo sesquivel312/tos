@@ -8,7 +8,7 @@ docker build --tag tos .
 
 set-location -path "${home_dir}\dev\tos"
 
-$docker_run = "docker run -idt --name tos --hostname tos -v ${home_dir}\www:/usr/share/nginx/html -v ${home_dir}\dev\tos:/tos -p 9080:80 tos"
+$docker_run = "docker run -idt --rm --name tos --hostname tos -v ${home_dir}\www:/usr/share/nginx/html -v ${home_dir}\dev\tos:/tos -p 9080:80 tos"
 
 iex -command $docker_run
 

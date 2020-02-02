@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Add an event</h2>
+        <form method="POST" action="/">
+            Nominee ID: <input type="number" name="nominee">
+            Reporter ID: <input type="number" name="reporter">
+            Category ID: <input type="number" name="category">
+            <input type="submit" value="Add">
+        </form>
+    </p>
+        <h2>Historical Events</h2>
+        <table>
+            {% for event in events %}
+            <tr>
+                <td>
+                    {{ event }}
+                </td>
+                <td>
+                    <form method="POST" action="./delete">
+                        <input type="hidden" value="{{ event }}" name="event">
+                        <input type="submit" value="Delete">
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+{% endblock %}

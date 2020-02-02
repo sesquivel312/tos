@@ -1,13 +1,33 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>CRUD Home</title>
-    </head>
-    <body>
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Add a book title</h2>
         <form method="POST" action="/">
             <input type="text" name="title">
             <input type="submit" value="Add">
         </form>
-    </body>
-</html>
+    </p>
+        <h2>Current Books</h2>
+        <table>
+            {% for book in books %}
+            <tr>
+                <td>
+                    {{book}}
+                </td>
+                <td>
+                    <form method="POST" action="./update">
+                        <input type="hidden" value="{{book}}" name="current_title">
+                        <input type="text" value="{{book}}" name="new_title">
+                        <input type="submit" value="Update">
+                    </form>
+                </td>
+                <td>
+                    <form method="POST" action="./delete">
+                        <input type="hidden" value="{{book}}" name="title">
+                        <input type="submit" value="Delete">
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+{% endblock %}
