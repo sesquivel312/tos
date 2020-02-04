@@ -63,7 +63,7 @@ def get_db(dbfile=None):
         else:
             dbfile = PurePath(dbfile)
 
-        db = g._database = sql.connect(dbfile)  # so db = a sqlite3 connection
+        db = g._database = sql.connect(str(dbfile))  # so db = a sqlite3 connection
 
     return db
 
