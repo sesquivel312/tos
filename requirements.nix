@@ -7,6 +7,7 @@
 click==7.0                # via flask
 dominate==2.4.0           # via flask-bootstrap
 flask-bootstrap==3.3.7.1
+flask-wtf==0.14.2
 flask==1.1.1
 itsdangerous==1.1.0       # via flask
 jinja2==2.10.3            # via flask
@@ -15,3 +16,4 @@ pytz==2019.3
 uwsgi==2.0.18
 visitor==0.1.3            # via flask-bootstrap
 werkzeug==0.16.0          # via flask
+wtforms==2.2.1            # via flask-wtf

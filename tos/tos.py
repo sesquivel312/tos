@@ -9,6 +9,7 @@ General comments
 todo p1 complete db operation function
 todo p1 update db functions to consume/return human readable strings instead of IDs
 todo P2 test with uwsgi, then nginx
+todo p2 move config out of app (possibly to flask app config item - but maybe not
 todo p3 fix the log file name - possibly move it
 todo p3 bootstrap integration
 todo p3 add static image file to templates

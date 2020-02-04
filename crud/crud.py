@@ -7,11 +7,14 @@ import sqlite3 as sql
 from flask import Flask, request, redirect, render_template, g
 from flask_bootstrap import Bootstrap
 
+from crud_config import config
+
 logging.basicConfig(filename=__file__ + '.log', level=logging.DEBUG)
 
 app = Flask(__name__)
 bs4 = Bootstrap(app)
 
+app.config['SECRET_KEY'] = 'supersykretpassword'
 
 # setup DB connection & cursor
 def get_db(dbfile=None):
