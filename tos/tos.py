@@ -20,7 +20,7 @@ todo p3 when/where close conn - this is tied up w/flask
 
 from datetime import datetime as dt
 import logging
-from pathlib import Path
+from pathlib import PurePath
 import sqlite3 as sql
 import sys
 
@@ -28,7 +28,8 @@ from flask import Flask, request, redirect, render_template, g
 from flask_bootstrap import Bootstrap
 import pytz
 
-logging.basicConfig(filename=__file__ + '.log', level=logging.DEBUG)
+logfile = PurePath(__file__).with_suffix('.log').name
+logging.basicConfig(filename=logfile, level=logging.DEBUG)
 
 app = Flask(__name__)
 bs4 = Bootstrap(app)
@@ -57,10 +58,10 @@ def get_db(dbfile=None):
     if db is None:
 
         if dbfile is None:
-            dbfile = Path('data/tos.sqlite')
+            dbfile = PurePath('data/tos.sqlite')
 
         else:
-            dbfile = Path(dbfile)
+            dbfile = PurePath(dbfile)
 
         db = g._database = sql.connect(dbfile)  # so db = a sqlite3 connection
 
