@@ -28,10 +28,13 @@ from flask import Flask, request, redirect, render_template, g
 from flask_bootstrap import Bootstrap
 import pytz
 
+from config import Config
+
 logfile = PurePath(__file__).with_suffix('.log').name
 logging.basicConfig(filename=logfile, level=logging.DEBUG)
 
 app = Flask(__name__)
+app.config.from_object(Config)
 bs4 = Bootstrap(app)
 
 
