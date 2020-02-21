@@ -11,28 +11,18 @@
 
 <p style="font-weight: bold; font-size: 18pt; text-align: center">Award the token
     <form class="form-control" method="POST" action="/" style="align">
-        <label for="reporter">Reporter: </label>
-            <select id="reporter" name="reporter">
-                <option>--Choose</option>
-                {% for user in users %}
-                <option value="{{ user[0] }}">{{ user[1] }}</option>
-                {% endfor %}
-            </select>
-        <label for="nominee">Nominee: </label>
-            <select id="nominee" name="nominee">
-                <option>--Choose</option>
-                {% for user in users %}
-                <option value="{{ user[0] }}">{{ user[1] }}</option>
-                {% endfor %}
-            </select>
-        <label for="category">Category: </label>
-            <select id="category" name="category">
-                <option>--Choose</option>
-                {% for category in categories %}
-                <option value="{{ category[0] }}">{{ category[1] }}</option>
-                {% endfor %}
-            </select>
-        <input type="submit" value="Nominate">
+        {{ form.hidden_tag() }}
+
+        {{ form.reporter.label }}
+        {{ form.reporter() }}
+
+        {{ form.nominee.label }}
+        {{ form.nominee() }}
+
+        {{ form.category.label }}
+        {{ form.category() }}
+
+        {{ form.submit() }}
     </form>
 </p>
 

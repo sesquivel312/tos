@@ -29,6 +29,7 @@ from flask_bootstrap import Bootstrap
 import pytz
 
 from config import Config
+from forms import NominateForm
 
 logfile = PurePath(__file__).with_suffix('.log').name
 logging.basicConfig(filename=logfile, level=logging.DEBUG)
@@ -338,13 +339,18 @@ def root():
     db = get_db()
     cur = db.cursor()
 
+    # instantiate the nomination form (using wtforms)
+    form = NominateForm()
+
     # need all this info in order to populate the page template
+    form.reporter.choices = form.nominee.choices = db_get_users(cur)
+    form.category.choices = db_get_categories(cur)
     holder = db_get_holder(cur)
-    users = db_get_users(cur)
-    categories = db_get_categories(cur)
     events = db_get_events(cur)
 
-    if request.form:
+    # todo tshoot events not updating
+
+    if form.validate_on_submit():
         # award token, i.e. add event to events table
 
         reporter = request.form.get('reporter')
@@ -359,10 +365,10 @@ def root():
         events = db_get_events(cur)
 
     return render_template('home.html',
+                           title='ToS',
                            holder=holder,
-                           users=users,
-                           categories=categories,
-                           events=events)
+                           events=events,
+                           form=form)
 
 
 @app.route('/user/add', methods=['GET', 'POST', ])
