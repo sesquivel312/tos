@@ -37,6 +37,8 @@ app.config.from_object(Config)
 bs4 = Bootstrap(app)
 
 
+app.logger.info('@@@ Logging is working')
+
 # setup DB connection & cursor
 def get_db(dbfile=None):
     """
