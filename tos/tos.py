@@ -6,10 +6,9 @@ General comments
         rows are returned then a list of tuples is returned, a single tuple is otherwise
 
 
-todo p1 complete db operation function
-todo p1 update db functions to consume/return human readable strings instead of IDs
-todo P2 test with uwsgi, then nginx
+todo p2 complete db operation functions
 todo p2 move config out of app (possibly to flask app config item - but maybe not
+todo p3 improve logging - currently logging to stderr using mostly default config
 todo p3 fix the log file name - possibly move it
 todo p3 bootstrap integration
 todo p3 add static image file to templates
@@ -29,10 +28,9 @@ from flask_bootstrap import Bootstrap
 import pytz
 
 from config import Config
-from forms import NominateForm
+from forms import NominateForm  # my module, using wtforms
 
-logfile = PurePath(__file__).with_suffix('.log').name
-logging.basicConfig(filename=logfile, level=logging.DEBUG)
+logging.basicConfig(level=logging.DEBUG)  # config before instantiating app
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -348,17 +346,18 @@ def root():
     holder = db_get_holder(cur)
     events = db_get_events(cur)
 
-    # todo tshoot events not updating
-
-    if form.validate_on_submit():
+    if form.is_submitted():  # was validate_on_submit() - fails if no validators supplied to field constructor?
         # award token, i.e. add event to events table
 
         reporter = request.form.get('reporter')
         nominee = request.form.get('nominee')
         categeory = request.form.get('category')
 
-        db_add_event(cur, (nominee, reporter, categeory))
-        db.commit()
+        try:
+            db_add_event(cur, (nominee, reporter, categeory))
+            db.commit()
+        except:
+            pass  # todo 2 be more careful with exception handling
 
         # get new holder & recent events
         holder = db_get_holder(cur)
