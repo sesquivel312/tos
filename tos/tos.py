@@ -346,6 +346,8 @@ def root():
     holder = db_get_holder(cur)
     events = db_get_events(cur)
 
+    app.logger.info('@@@ form is submitted {}'.format(form.is_submitted()))
+
     if form.is_submitted():  # was validate_on_submit() - fails if no validators supplied to field constructor?
         # award token, i.e. add event to events table
 
