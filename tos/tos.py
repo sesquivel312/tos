@@ -345,8 +345,8 @@ def root():
     # need all this info in order to populate the page template
     form.reporter.choices = form.nominee.choices = db_get_users(cur)
     form.category.choices = db_get_categories(cur)
-    holder = db_get_holder(cur)
-    events = db_get_events(cur)
+    # holder = db_get_holder(cur)
+    # events = db_get_events(cur)
 
     app.logger.info('@@@ form is submitted {}'.format(form.is_submitted()))
 
