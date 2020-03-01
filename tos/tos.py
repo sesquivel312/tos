@@ -362,6 +362,7 @@ def root():
         try:
             db_add_event(cur, (nominee, reporter, categeory))
             db.commit()
+            app.logger.info('@@@ commit completed')
         except:
             app.logger.info('@@@ failed db update')
             pass  # todo 2 be more careful with exception handling
