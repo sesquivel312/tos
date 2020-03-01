@@ -139,3 +139,6 @@ dmypy.json
 # don't include backup/old files
 *.bkp
 *.old
+
+# exclude the tos db
+tos/data/tos.sqlite
