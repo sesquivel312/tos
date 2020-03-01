@@ -337,6 +337,8 @@ def root():
     """
 
     db = get_db()
+
+    app.logger.info('@@@ db is {}'.format(db))
     cur = db.cursor()
 
     # instantiate the nomination form (using wtforms)
