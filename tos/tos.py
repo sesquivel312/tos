@@ -377,6 +377,9 @@ def root():
     holder = db_get_holder(cur)
     events = db_get_events(cur)
 
+    app.logger.info('@@@ holder {}'.format(holder))
+    app.logger.info('@@@ events {}'.format(events))
+
     return render_template('home.html',
                            title='ToS',
                            holder=holder,
