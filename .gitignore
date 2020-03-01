@@ -142,3 +142,10 @@ dmypy.json
 
 # exclude the tos db
 tos/data/tos.sqlite
+
+# this is to exclude stuff on hosting server
+tos/bin/
+tos/lib64/
+
+# exclude the python environment
+nix/
