@@ -373,9 +373,9 @@ def root():
             app.logger.info('@@@ failed db update')
             pass  # todo 2 be more careful with exception handling
 
-        # get new holder & recent events
-        holder = db_get_holder(cur)
-        events = db_get_events(cur)
+    # get new holder & recent events
+    holder = db_get_holder(cur)
+    events = db_get_events(cur)
 
     return render_template('home.html',
                            title='ToS',
