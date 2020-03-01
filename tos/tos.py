@@ -337,8 +337,6 @@ def root():
     """
 
     db = get_db()
-
-    app.logger.info('@@@ db is {}'.format(db))
     cur = db.cursor()
 
     # instantiate the nomination form (using wtforms)
@@ -366,6 +364,8 @@ def root():
                                                                categeory))
 
         try:
+            app.logger.info('@@@ db is {}'.format(db))
+            app.logger.info('@@@ cur is {}'.format(cur))
             db_add_event(cur, (nominee, reporter, categeory))
             db.commit()
             app.logger.info('@@@ commit completed')
