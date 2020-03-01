@@ -359,6 +359,10 @@ def root():
         nominee = request.form.get('nominee')
         categeory = request.form.get('category')
 
+        app.logger.info('@@@ rpt: {}, nom: {}, cat: {}'.format(reporter,
+                                                               nominee,
+                                                               categeory))
+
         try:
             db_add_event(cur, (nominee, reporter, categeory))
             db.commit()
