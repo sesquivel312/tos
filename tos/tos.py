@@ -349,6 +349,8 @@ def root():
     if form.is_submitted():  # was validate_on_submit() - fails if no validators supplied to field constructor?
         # award token, i.e. add event to events table
 
+        app.logger.info('@@@ Entered form processing')
+
         reporter = request.form.get('reporter')
         nominee = request.form.get('nominee')
         categeory = request.form.get('category')
@@ -357,6 +359,7 @@ def root():
             db_add_event(cur, (nominee, reporter, categeory))
             db.commit()
         except:
+            app.logger.info('@@@ failed db update')
             pass  # todo 2 be more careful with exception handling
 
         # get new holder & recent events
