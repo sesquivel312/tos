@@ -37,8 +37,6 @@ app.config.from_object(Config)
 bs4 = Bootstrap(app)
 
 
-app.logger.info('@@@ Logging is working')
-
 # setup DB connection & cursor
 def get_db(dbfile=None):
     """
@@ -342,43 +340,27 @@ def root():
     # instantiate the nomination form (using wtforms)
     form = NominateForm()
 
-    # need all this info in order to populate the page template
-    form.reporter.choices = form.nominee.choices = db_get_users(cur)
+    # need this info to populate the form selection fields
+    form.reporter.choices = form.nominee.choices = db_get_users(cur)  # same user list used for reporter & nominee
     form.category.choices = db_get_categories(cur)
-    # holder = db_get_holder(cur)
-    # events = db_get_events(cur)
 
-    app.logger.info('@@@ form is submitted {}'.format(form.is_submitted()))
+    if form.is_submitted():  # validate_on_submit() fails if no validators supplied to field constructor?
 
-    if form.is_submitted():  # was validate_on_submit() - fails if no validators supplied to field constructor?
         # award token, i.e. add event to events table
-
-        app.logger.info('@@@ Entered form processing')
-
         reporter = request.form.get('reporter')
         nominee = request.form.get('nominee')
         categeory = request.form.get('category')
 
-        app.logger.info('@@@ rpt: {}, nom: {}, cat: {}'.format(reporter,
-                                                               nominee,
-                                                               categeory))
-
         try:
-            app.logger.info('@@@ db is {}'.format(db))
-            app.logger.info('@@@ cur is {}'.format(cur))
             db_add_event(cur, (nominee, reporter, categeory))
             db.commit()
-            app.logger.info('@@@ commit completed')
         except:
-            app.logger.info('@@@ failed db update')
             pass  # todo 2 be more careful with exception handling
 
-    # get new holder & recent events
+    # get latest holder & events
+    # do this now b/c data might have just been updated by a form submission above
     holder = db_get_holder(cur)
     events = db_get_events(cur)
-
-    app.logger.info('@@@ holder {}'.format(holder))
-    app.logger.info('@@@ events {}'.format(events))
 
     return render_template('home.html',
                            title='ToS',
