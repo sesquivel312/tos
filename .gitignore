@@ -149,3 +149,9 @@ tos/lib64/
 
 # exclude the python environment
 nix/
+
+# exlude certain terraform files
+.terraform/
+*.tfstate
+*.tfstate.backup
+tfplan

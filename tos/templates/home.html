@@ -10,20 +10,22 @@
 <p style="text-align: center"><img src="../static/tos.png" /></p>
 
 <p style="font-weight: bold; font-size: 18pt; text-align: center">Award the token
-    <form class="form-control" method="POST" action="/" style="align">
-        {{ form.hidden_tag() }}
+    <div class="container">
+        <form method="POST" action="/" style="align">
+            {{ form.hidden_tag() }}
 
-        {{ form.reporter.label }}
-        {{ form.reporter() }}
+            {{ form.reporter.label }}
+            {{ form.reporter() }}<br>
 
-        {{ form.nominee.label }}
-        {{ form.nominee() }}
+            {{ form.nominee.label }}
+            {{ form.nominee() }}<br>
 
-        {{ form.category.label }}
-        {{ form.category() }}
+            {{ form.category.label }}
+            {{ form.category() }}<br>
 
-        {{ form.submit() }}
-    </form>
+            {{ form.submit() }}
+        </form>
+    </div>
 </p>
 
 <p style="font-weight: bold; font-size: 18pt; text-align: center;">Most Recent Awards</p>

@@ -1,0 +1,27 @@
+# DigitalOcean (DO) images support cloud init.  During boot
+# The cloud provider (I assume) installs the "stuff" defined
+# in the cloud init file into the machine before handing it
+# over to the cloud infrastructure to run.  Def need to learn
+# more detail on the mechanisms in use.  Currently
+# using Terraform to put the cinit.yaml file onto the host
+# or wherever it's landing
+
+#cloud-config
+package_update: true
+package_upgrade: true
+packages:
+  - python3-pip
+  - python3-venv
+  - sqlite3
+  - git
+
+users:
+  - name: tosadmin
+    groups: sudo
+    shell: /bin/bash
+
+runcmd:
+  - python3 -m pip install --upgrade pip
+
+# eventually see if I can upload files, create venv, etc. - need to create user tosadmin with a password and/or keys first
+# todo tshoot package installs - they seem to be hung
