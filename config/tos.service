@@ -1,0 +1,16 @@
+# this is a systemd unit config for the tos app
+# it should live in /etc/systemd/system/
+[Unit]
+Description=uWSGI instance serving TOS
+After=network.target
+
+[Service]
+Type=simple
+User=tosadmin
+Group=www-data
+WorkingDirectory=/home/tosadmin/tos/tos
+Environment="PATH=/home/tosadmin/tos/nix/bin"
+ExecStart=/home/tosadmin/tos/nix/bin/uwsgi --ini /home/tosadmin/tos/tos/tos.ini
+
+[Install]
+WantedBy=multi-user.target
